@@ -145,34 +145,33 @@ env = FishMove(predictor)
 #python train_mf.py image -f yolox/exp/yolox_tiny_fish.py -c weights/best_tiny3.pth --conf 0.25 --nms 0.45 --tsize 640 --device gpu
 if __name__ == '__main__':
     # Start training
-    print("\nCollecting experience...")
+    print("\n收集经验...")
     net.train()
     for i_episode in range(args.n_episode):
         winsound.Beep(500, 500)
         keyboard.wait('r')
-        # play 400 episodes of cartpole game
+        # 进行400个cartpole游戏的回合
         s = env.reset()
         ep_r = 0
         while True:
-            # take action based on the current state
+            # 根据当前状态采取行动
             a = agent.choose_action(s)
-            # obtain the reward and next state and some other information
+            # 获取奖励、下一个状态和其他信息
             s_, r, done = env.step(a)
 
-            # store the transitions of states
+            # 存储状态转换
             agent.store_transition(s, a, r, s_, int(done))
 
             ep_r += r
-            # if the experience repaly buffer is filled, DQN begins to learn or update
-            # its parameters.
+            # 如果经验回放缓冲区已满，DQN开始学习或更新参数。
             if agent.memory_counter > agent.memory_capacity:
                 agent.train_step()
                 if done:
                     print('Ep: ', i_episode, ' |', 'Ep_r: ', round(ep_r, 2))
 
             if done:
-                # if game is over, then skip the while loop.
+                # 如果游戏结束，则跳出循环。
                 break
-            # use next state to update the current state.
+            # 使用下一个状态更新当前状态。
             s = s_
         torch.save(net.state_dict(), os.path.join(args.save_dir, f'fish_move_net_{i_episode}.pth'))
