@@ -1,24 +1,22 @@
-# import pip
+# 导入pip
 import subprocess
 import sys
 import argparse
 
-# use python type hints to make code more readable
+# 使用Python类型提示使代码更易读
 from typing import List, Optional
 
 
 def pip_install(proxy: Optional[str], args: List[str]) -> None:
     if proxy is None:
-        # pip.main(["install", f"--proxy={proxy}", *args])
+        # 使用subprocess运行pip命令安装包
         subprocess.run(
             [sys.executable, "-m", "pip", "install", *args],
-            # capture_output=False,
             check=True,
         )
     else:
         subprocess.run(
             [sys.executable, "-m", "pip", "install", f"--proxy={proxy}", *args],
-            # capture_output=False,
             check=True,
         )
 
@@ -56,15 +54,12 @@ def main():
     """
 
     for line in pkgs.split("\n"):
-        # handle multiple space in an empty line
+        # 处理空行中的多个空格
         line = line.strip()
 
         if len(line) > 0:
-            # use pip's internal APIs in this way is deprecated. This will fail in a future version of pip.
-            # The most reliable approach, and the one that is fully supported, is to run pip in a subprocess.
-            # ref: https://pip.pypa.io/en/latest/user_guide/#using-pip-from-your-program
-            # pip.main(['install', *line.split()])
-
+            # 使用pip的内部API已被弃用。在将来的pip版本中，这种方法将失败。
+            # 最可靠的方法是在子进程中运行pip。
             pip_install(args.proxy, line.split())
 
     print("\nsuccessfully installed requirements!")
